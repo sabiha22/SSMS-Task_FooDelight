@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>FooDelight</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+  <style>
+	body {
+	padding-top: 30px;
+	background-image: url('https://webgradients.com/public/webgradients_png/007%20Sunny%20Morning.png');
+}
+
+.product {
+	margin-bottom: 30px;
+}
+.product-inner {
+	box-shadow: 0 0 10px rgba(0,0,0,.2);
+	padding: 10px;
+	background-color: white;
+}
+.product img {
+	margin-bottom: 10px;
+	width: 320px;
+	height: 200px;
+}
+.bg-steel {
+    background-color: #FA610A;
+  }
+
+  .site-header .navbar-nav .nav-link {
+	color: #cbd5db;
+  }
+  .site-header .navbar-nav .nav-link:hover {
+    color: #ffffff;
+  }
+  
+  .site-header .navbar-nav .nav-link.active {
+    font-weight: 500;
+  }
+.form-group {
+	width: 350px;
+	display: inline;
+	float: left;
+}
+.form-control{
+	display: flex;
+}
+.search-box{
+	padding-left: 30px;
+}
+.btn1{
+	margin-left: 10px;
+}
+.order-now{
+	display: flex;
+	justify-content: center;
+	padding-bottom: 50px;
+}
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+#myBtn{
+	border-radius: 10px;
+	margin-bottom: 50px;
+}
+.bg2{
+	background-image: url('https://coverfiles.alphacoders.com/142/142043.jpg');
+	font-weight: 900;
+	color: white;
+}
+
+</style>
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<header class="site-header">
+	<nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+	  <div class="container">
+		<a class="navbar-brand mr-4" href="{% url 'blog-home' %}">FooDelight</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarToggle">
+		  <div class="navbar-nav mr-auto">
+		  </div>
+		  <!-- Navbar Right Side -->
+		  <div class="navbar-nav">
+			{% if user.is_authenticated %}
+			<a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
+			<a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+			{% else %}
+			<a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+			<a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+			{% endif %}
+		  </div>
+		</div>
+	  </div>
+	</nav>
+  </header>
+  <div class="jumbotron jumbotron-fluid bg2">
+	<div class="container bg3">
+	  <h1 class="display-4">Our Menu</h1>
+	  <p class="lead">Choose from our delectable range of dishes</p>
+	</div>
+  </div>
+<div class="container">
+	<div class="row search-box" id="search">
+		<form id="search-form" action="" method="POST" enctype="multipart/form-data">
+			<div class="form-group col-xs-9">
+				<input class="form-control" type="text" placeholder="Search" />
+			</div>
+			<div class="form-group col-xs-3">
+				<button type="submit" class="btn btn-block btn-primary btn1" style="background-color: #873600
+				;">Search</button>
+			</div>
+		</form>
+	</div>
+	<div class="form-row " id="filter">
+		<form>
+			<div class="form-group  col-sm-3 col-xs-6">
+				<select data-filter="make" class="filter-make filter form-control">
+					<option value="">Select Category</option>
+					<option value="">Show All</option>
+				</select>
+			</div>
+			<div class="form-group col-sm-3 col-xs-6">
+				<select data-filter="model" class="filter-model filter form-control">
+					<option value="">Select by Name</option>
+					<option value="">Show All</option>
+				</select>
+			</div>
+			<div class="form-group col-sm-3 col-xs-6">
+				<select data-filter="type" class="filter-type filter form-control">
+					<option value="">Select Type</option>
+					<option value="">Show All</option>
+				</select>
+			</div>
+			<div class="form-group col-sm-3 col-xs-6">
+				<select data-filter="price" class="filter-price filter form-control">
+					<option value="">Select Price Range</option>
+					<option value="">Show All</option>
+				</select>
+			</div>
+		</form>
+	</div>
+	<div class="row" id="products"></div>
+	<!--<div class="order-now">
+		<button type="button myBtn" class="btn btn-success btn2">Place your order now! </button>
+	</div>-->
+	<!-- Trigger/Open The Modal -->
+	<button id="myBtn" class="btn-success">Place your order</button>
+	<!-- The Modal -->
+	<div id="myModal" class="modal">
+
+  	<!-- Modal content -->
+  	<div class="modal-content">
+    <span class="close">&times;</span>
+    <p>
+		<div class="form-check">
+			<input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+			<label class="form-check-label" for="defaultCheck1">Tiramisu</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+			<label class="form-check-label" for="defaultCheck1">Margherita Pizzaa</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+			<label class="form-check-label" for="defaultCheck1">Chole Bhature</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+			<label class="form-check-label" for="defaultCheck1">Paneer Tikka</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+			<label class="form-check-label" for="defaultCheck1">Gulab Jamun with Ice Cream</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+			<label class="form-check-label" for="defaultCheck1">Biryani</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+			<label class="form-check-label" for="defaultCheck1">Shahi Tukda</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+			<label class="form-check-label" for="defaultCheck1">Veg Manchurin with Fried Rice</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+			<label class="form-check-label" for="defaultCheck1">Veg Momos</label>
+		</div>
+		<div class="alert alert-success alert-dismissible fade" role="alert" id="buttonAlert">
+			<strong>Success!</strong> You can close the window now.
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+	  </div>
+	   <button class="btn btn-warning" id="modalButton">Click to confirm your order</button>
+	</p>
+  </div>
+
+</div>
+
+	
+</div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script>
+<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'></script>
+<script>
+	var data = [
+	{
+		"category": "Italian",
+		"model": "Tiramisu",
+		"type": "Dessert",
+		"price": "Rs. 150",
+		"image": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Tiramisu_with_blueberries_and_raspberries%2C_July_2011.jpg"
+	},
+	{
+		"category": "Italian",
+		"model": "Margherita Pizza",
+		"type": "Main Course",
+		"price": "Rs. 300",
+		"image": "https://cdn.pixabay.com/photo/2015/10/17/20/22/margherita-pizza-993274_1280.jpg"
+	},
+	{
+		"category": "Indian",
+		"model": "Chole Bhature",
+		"type": "Main Course",
+		"price": "Rs. 150",
+		"image": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Chola_bhatura.jpg"
+	},
+	{
+		"category": "Indian",
+		"model": "Paneer Tikka",
+		"type": "Starter",
+		"price": "Rs. 100",
+		"image": "https://wetellyouhow.com/wp-content/uploads/2013/07/paneer-tikka.jpg"
+	},
+	{
+		"category": "Indian",
+		"model": "Gulab Jamun with Ice Cream",
+		"type": "Dessert",
+		"price": "Rs. 90",
+		"image": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Gulab_jamun_with_Vanilla_Ice_cream.jpg"
+	},
+	{
+		"category": "Mughlai",
+		"model": "Biryani",
+		"type": "Main Course",
+		"price": "Rs. 400",
+		"image": "https://happyjamin.com/wp-content/uploads/2020/03/mutton-biryani.jpg"
+	},
+	{
+		"category": "Mughlai",
+		"model": "Shahi Tukda",
+		"type": "Dessert",
+		"price": "Rs. 200",
+		"image": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Nutty_Shahi_Tukda.jpg"
+	},
+	{
+		"category": "Chinese",
+		"model": "Veg Manchurian with Fried Rice",
+		"type": "Main Course",
+		"price": "Rs. 200",
+		"image": "https://farm7.static.flickr.com/6206/6041758497_e0dcb98d92_b.jpg"
+	},
+	{
+		"category": "Chinese",
+		"model": "Veg Momos",
+		"type": "Starter",
+		"price": "Rs. 80",
+		"image": "https://p0.pikist.com/photos/680/419/momos-food-resturant-travel-restaurante-meat-meal-dinner-dining.jpg"
+	}
+];
+
+var products = "",
+	makes = "",
+	models = "",
+	types = "";
+
+for (var i = 0; i < data.length; i++) {
+	var make = data[i].category,
+		model = data[i].model,
+		type = data[i].type,
+		price = data[i].price,
+		rawPrice = price.replace("$",""),
+		rawPrice = parseInt(rawPrice.replace(",","")),
+		image = data[i].image;
+	
+	//create product cards
+	products += "<div class='col-sm-4 product' data-make='" + make + "' data-model='" + model + "' data-type='" + type + "' data-price='" + rawPrice + "'><div class='product-inner text-center'><img src='" + image + "'><br />Category: " + make + "<br />Name: " + model + "<br />Type: " + type + "<br />Price: " + price + "</div></div>";
+	
+	//create dropdown of makes
+	if (makes.indexOf("<option value='" + make + "'>" + make + "</option>") == -1) {
+		makes += "<option value='" + make + "'>" + make + "</option>";
+	}
+	
+	//create dropdown of models
+	if (models.indexOf("<option value='" + model+"'>" + model + "</option>") == -1) {
+		models += "<option value='" + model + "'>" + model + "</option>";
+	}
+	
+	//create dropdown of types
+	if (types.indexOf("<option value='" + type + "'>" + type + "</option>") == -1) {
+		types += "<option value='" + type + "'>" + type + "</option>";
+	}
+}
+
+$("#products").html(products);
+$(".filter-make").append(makes);
+$(".filter-model").append(models);
+$(".filter-type").append(types);
+
+var filtersObject = {};
+
+//on filter change
+$(".filter").on("change",function() {
+	var filterName = $(this).data("filter"),
+		filterVal = $(this).val();
+	
+	if (filterVal == "") {
+		delete filtersObject[filterName];
+	} else {
+		filtersObject[filterName] = filterVal;
+	}
+	
+	var filters = "";
+	
+	for (var key in filtersObject) {
+	  	if (filtersObject.hasOwnProperty(key)) {
+			filters += "[data-"+key+"='"+filtersObject[key]+"']";
+	 	}
+	}
+	
+	if (filters == "") {
+		$(".product").show();
+	} else {
+		$(".product").hide();
+		$(".product").hide().filter(filters).show();
+	}
+});
+
+//on search form submit
+$("#search-form").submit(function(e) {
+	e.preventDefault();
+	var query = $("#search-form input").val().toLowerCase();
+
+	$(".product").hide();
+	$(".product").each(function() {
+		var make = $(this).data("make").toLowerCase(),
+			model = $(this).data("model").toLowerCase(),
+			type = $(this).data("type").toLowerCase();
+
+		if (make.indexOf(query) > -1 || model.indexOf(query) > -1 || type.indexOf(query) > -1) {
+			$(this).show();
+		}
+	});
+});	
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+$("#modalButton").click(function(){
+      $("#buttonAlert").addClass('show') //Shows Bootstrap alert
+})
+</script>
+
+</body>
+</html>
